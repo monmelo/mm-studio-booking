@@ -12,10 +12,12 @@ const TIME_SLOTS = [
   "13:00", "14:00", "15:00", "16:00", "17:00",
 ];
 const DEPARTMENTS = ["Monkey Melody", "Kummara", "Ludenara"];
-const POLL_INTERVAL_MS = 30000; // background sync with Google Sheets
 
 const IS_PLACEHOLDER =
   !GOOGLE_SCRIPT_URL || !GOOGLE_SCRIPT_URL.startsWith("https://script.google.com/");
+
+const LOGO_SRC = "data:image/png;base64,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";
+const BRAND = { yellow: "#FFD122", red: "#E8352B" };
 
 const todayISO = () => {
   const d = new Date();
@@ -52,10 +54,9 @@ export default function StudioBooking() {
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
   // ----- Load reservations from Google Sheets -----
-  // silent = background refresh without the loading overlay
-  const loadReservations = useCallback(async ({ silent = false } = {}) => {
+  const loadReservations = useCallback(async () => {
     if (IS_PLACEHOLDER) return;
-    if (!silent) setLoading(true);
+    setLoading(true);
     setLoadError("");
     try {
       const res = await fetch(GOOGLE_SCRIPT_URL, { method: "GET", cache: "no-store" });
@@ -66,22 +67,12 @@ export default function StudioBooking() {
       setLoadError("Could not load reservations from the spreadsheet. Booked slots may be out of date.");
       console.error(err);
     } finally {
-      if (!silent) setLoading(false);
+      setLoading(false);
     }
   }, []);
 
-  // Initial load, then poll the sheet and refresh when the tab becomes visible
   useEffect(() => {
     loadReservations();
-    const id = setInterval(() => loadReservations({ silent: true }), POLL_INTERVAL_MS);
-    const onVisible = () => {
-      if (document.visibilityState === "visible") loadReservations({ silent: true });
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      clearInterval(id);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
   }, [loadReservations]);
 
   // ----- Derived: booked slots per studio for the selected date -----
@@ -93,11 +84,6 @@ export default function StudioBooking() {
     });
     return map;
   }, [reservations, date]);
-
-  // Drop selected slots that were booked by someone else since selection
-  useEffect(() => {
-    if (studio) setSelected((prev) => prev.filter((t) => !bookedMap[studio].has(t)));
-  }, [bookedMap, studio]);
 
   // ----- Grid interaction -----
   const toggleSlot = (s, t) => {
@@ -188,33 +174,35 @@ export default function StudioBooking() {
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
-  const toastStyles = {
-    success: "bg-emerald-50 border-emerald-300 text-emerald-900",
-    error: "bg-red-50 border-red-300 text-red-900",
-    info: "bg-sky-50 border-sky-300 text-sky-900",
-  };
+  const toastIconColor = { success: "text-emerald-600", error: "text-[#E8352B]", info: "text-black" };
   const ToastIcon = toast
     ? { success: CheckCircle2, error: AlertTriangle, info: Info }[toast.type]
     : null;
 
+  const cardCls = "rounded-2xl border-[3px] border-black bg-white shadow-[6px_6px_0_#000]";
+  const bannerCls = "flex items-start gap-3 rounded-xl border-2 border-black bg-white px-4 py-3 text-sm text-black shadow-[4px_4px_0_#000]";
   const inputCls =
-    "w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500";
+    "w-full rounded-xl border-2 border-black bg-white px-3 py-2 text-sm text-black focus:outline-none focus:ring-4 focus:ring-black/25";
 
   return (
-    <div className="min-h-screen bg-stone-100 text-stone-900">
+    <div className="min-h-screen bg-[#FFD122] text-black" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;1,400&display=swap');`}</style>
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold">Studio booking</h1>
-          <p className="mt-1 text-sm text-stone-600">
-            Pick a date, select slots in the grid, then fill in the booking details.
-          </p>
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold leading-tight">Studio booking</h1>
+            <p className="mt-1 text-sm">
+              Pilih tanggal, pilih slot di grid, lalu isi detail booking.
+            </p>
+          </div>
+          <img src={LOGO_SRC} alt="Monkey Melody" className="h-10 w-auto" />
         </header>
 
         {/* Toast / status banners */}
         <div aria-live="polite" className="space-y-3">
           {toast && (
-            <div className={`flex items-start gap-3 rounded-md border px-4 py-3 text-sm ${toastStyles[toast.type]}`}>
-              <ToastIcon className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className={bannerCls}>
+              <ToastIcon className={`mt-0.5 h-5 w-5 shrink-0 ${toastIconColor[toast.type]}`} />
               <p className="flex-1">{toast.text}</p>
               <button type="button" onClick={() => setToast(null)} aria-label="Dismiss message">
                 <X className="h-4 w-4" />
@@ -222,16 +210,16 @@ export default function StudioBooking() {
             </div>
           )}
           {IS_PLACEHOLDER && !toast && (
-            <div className="flex items-start gap-3 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className={bannerCls}>
+              <Info className="mt-0.5 h-5 w-5 shrink-0" />
               <p>Demo mode: GOOGLE_SCRIPT_URL is not set. Bookings stay in local state and reset on reload.</p>
             </div>
           )}
           {loadError && (
-            <div className="flex items-start gap-3 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
-              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className={bannerCls}>
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[#E8352B]" />
               <p className="flex-1">{loadError}</p>
-              <button type="button" onClick={() => loadReservations()} className="underline">
+              <button type="button" onClick={loadReservations} className="font-semibold underline">
                 Retry
               </button>
             </div>
@@ -241,7 +229,7 @@ export default function StudioBooking() {
         {/* Date + refresh */}
         <div className="mt-6 flex flex-wrap items-end gap-4">
           <div>
-            <label htmlFor="booking-date" className="mb-1 block text-sm font-medium">
+            <label htmlFor="booking-date" className="mb-1 block text-sm font-semibold">
               Booking date
             </label>
             <input
@@ -256,9 +244,9 @@ export default function StudioBooking() {
           {!IS_PLACEHOLDER && (
             <button
               type="button"
-              onClick={() => loadReservations()}
+              onClick={loadReservations}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm hover:bg-stone-50 disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-4 py-2 text-sm font-semibold hover:bg-stone-100 disabled:opacity-60"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               Refresh bookings
@@ -267,16 +255,16 @@ export default function StudioBooking() {
         </div>
 
         {/* Cinema grid */}
-        <section className="mt-4 rounded-xl bg-indigo-950 p-4 sm:p-6" aria-label="Studio availability grid">
+        <section className="mt-4 rounded-3xl border-[3px] border-black bg-black p-4 shadow-[6px_6px_0_rgba(0,0,0,0.35)] sm:p-6" aria-label="Studio availability grid">
           <div className="mx-auto mb-5 max-w-md">
-            <div className="h-1.5 rounded-full bg-amber-300/80" />
-            <p className="mt-2 text-center text-xs text-indigo-200">Studios / time slots</p>
+            <div className="h-2 rounded-full bg-[#FFD122]" />
+            <p className="mt-2 text-center text-xs text-white/70">Studio / time slots</p>
           </div>
 
           <div className="relative overflow-x-auto">
             {loading && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-indigo-950/70">
-                <Loader2 className="h-6 w-6 animate-spin text-amber-300" />
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70">
+                <Loader2 className="h-6 w-6 animate-spin text-[#FFD122]" />
                 <span className="sr-only">Loading reservations</span>
               </div>
             )}
@@ -285,7 +273,7 @@ export default function StudioBooking() {
                 <tr>
                   <th />
                   {TIME_SLOTS.map((t) => (
-                    <th key={t} className="px-1 text-xs font-normal text-indigo-200">
+                    <th key={t} className="px-1 text-xs font-normal text-white/70">
                       {t}
                     </th>
                   ))}
@@ -294,7 +282,7 @@ export default function StudioBooking() {
               <tbody>
                 {STUDIOS.map((s) => (
                   <tr key={s}>
-                    <th scope="row" className="whitespace-nowrap pr-2 text-left text-sm font-medium text-indigo-50">
+                    <th scope="row" className="whitespace-nowrap pr-2 text-left text-sm font-semibold text-white">
                       {s}
                     </th>
                     {TIME_SLOTS.map((t) => {
@@ -310,12 +298,12 @@ export default function StudioBooking() {
                             onClick={() => toggleSlot(s, t)}
                             className={[
                               "h-9 w-11 rounded-t-lg rounded-b-sm text-xs transition-colors",
-                              "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300",
+                              "focus:outline-none focus-visible:ring-2 focus-visible:ring-white",
                               booked
-                                ? "cursor-not-allowed bg-indigo-900 text-indigo-500 line-through"
+                                ? "cursor-not-allowed bg-[#FFD122] font-semibold text-black line-through"
                                 : isSel
-                                ? "bg-amber-300 font-semibold text-indigo-950"
-                                : "bg-indigo-300 text-indigo-950 hover:bg-indigo-200",
+                                ? "bg-[#FF7A1A] font-bold text-black ring-2 ring-white"
+                                : "bg-white text-black hover:bg-[#FFE680]",
                             ].join(" ")}
                           >
                             {booked ? "x" : isSel ? "\u2713" : ""}
@@ -329,29 +317,29 @@ export default function StudioBooking() {
             </table>
           </div>
 
-          <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs text-indigo-100">
-            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-indigo-300" />Available</span>
-            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-amber-300" />Selected</span>
-            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-indigo-900" />Booked</span>
+          <div className="mt-5 flex flex-wrap justify-center gap-4 text-xs text-white">
+            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-white" />Available</span>
+            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-[#FF7A1A]" />Selected</span>
+            <span className="flex items-center gap-2"><i className="inline-block h-3 w-4 rounded-t bg-[#FFD122]" />Booked</span>
           </div>
         </section>
 
         {/* Booking form */}
-        <form onSubmit={handleSubmit} className="mt-6 rounded-xl border border-stone-200 bg-white p-4 sm:p-6" noValidate>
-          <h2 className="text-lg font-semibold">Booking details</h2>
-          <p className="mt-1 text-sm text-stone-600">
+        <form onSubmit={handleSubmit} className={`mt-6 p-4 sm:p-6 ${cardCls}`} noValidate>
+          <h2 className="text-lg font-bold">Booking details</h2>
+          <p className="mt-2 inline-block rounded-full bg-black px-3 py-1 text-xs font-semibold text-white">
             {studio && selected.length
-              ? `${studio}, ${date}, ${selected.join(", ")}`
-              : "No slots selected."}
+              ? `${studio} \u00B7 ${date} \u00B7 ${selected.join(", ")}`
+              : "No slots selected"}
           </p>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="fullName" className="mb-1 block text-sm font-medium">Full name</label>
+              <label htmlFor="fullName" className="mb-1 block text-sm font-semibold">Full name</label>
               <input id="fullName" value={form.fullName} onChange={updateField("fullName")} className={inputCls} autoComplete="name" />
             </div>
             <div>
-              <label htmlFor="department" className="mb-1 block text-sm font-medium">Department</label>
+              <label htmlFor="department" className="mb-1 block text-sm font-semibold">Department</label>
               <select id="department" value={form.department} onChange={updateField("department")} className={inputCls}>
                 <option value="">Select department</option>
                 {DEPARTMENTS.map((d) => (
@@ -360,23 +348,23 @@ export default function StudioBooking() {
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label htmlFor="project" className="mb-1 block text-sm font-medium">Project / purpose</label>
+              <label htmlFor="project" className="mb-1 block text-sm font-semibold">Project / purpose</label>
               <input id="project" value={form.project} onChange={updateField("project")} className={inputCls} />
             </div>
             <div className="sm:col-span-2">
-              <label htmlFor="notes" className="mb-1 block text-sm font-medium">Notes (optional)</label>
+              <label htmlFor="notes" className="mb-1 block text-sm font-semibold">Notes (optional)</label>
               <textarea id="notes" rows={3} value={form.notes} onChange={updateField("notes")} className={inputCls} />
             </div>
           </div>
 
           {formError && (
-            <p role="alert" className="mt-4 text-sm text-red-700">{formError}</p>
+            <p role="alert" className="mt-4 text-sm font-semibold text-[#E8352B]">{formError}</p>
           )}
 
           <button
             type="submit"
             disabled={submitting || loading}
-            className="mt-5 inline-flex min-w-40 items-center justify-center gap-2 rounded-md bg-indigo-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-5 inline-flex min-w-44 items-center justify-center gap-2 rounded-full border-2 border-black bg-[#FF7A1A] px-6 py-2.5 text-sm font-bold text-black shadow-[4px_4px_0_#000] hover:bg-[#FF8F3D] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_#000] focus:outline-none focus-visible:ring-4 focus-visible:ring-black/30 disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
           >
             {submitting ? (
               <>
@@ -388,6 +376,10 @@ export default function StudioBooking() {
             )}
           </button>
         </form>
+
+        <footer className="mt-8 rounded-full bg-black px-6 py-3 text-sm font-semibold text-white">
+          www.monkeymelody.com
+        </footer>
       </div>
     </div>
   );
